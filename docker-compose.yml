@@ -1,0 +1,33 @@
+services:
+  # This is the service name we'd use to exec into it later
+  mariadb:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - database_data:/var/lib/mysql
+
+  # This is the service name we'd use to exec into it later
+  wordpress:
+    image: wordpress
+    restart: always
+    depends_on:
+      - mariadb
+    ports:
+      - "8080:80"  # Exposes WordPress on localhost:8080
+    environment:
+      WORDPRESS_DB_HOST: mariadb:3306
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+      WORDPRESS_DB_USER: ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - wordpress_data:/var/www/html
+
+volumes:
+  database_data:
+  wordpress_data:
+  
